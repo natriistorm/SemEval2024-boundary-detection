@@ -1,0 +1,1 @@
+# semeval2024-machine-generated-texts-detection
