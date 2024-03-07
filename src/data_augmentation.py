@@ -1,11 +1,12 @@
 import re
+import difflib
 import json
 import random
 import pandas as pd
 from splitter import split_into_sentences
 
 
-def find_index_of_word(target_sentence, check_trio) -> int:
+def find_index_of_word(target_sentence: str, check_trio: tuple) -> int:
     """
 
     Args:
@@ -28,8 +29,42 @@ def find_index_of_word(target_sentence, check_trio) -> int:
                 target_sentence[i + 1] == check_trio[2]:
             return i
 
+def create_example(sentences: list, idx_begin: int, idx_end: int,
+                   idx_boundary: int, position: int, target_word: str) -> tuple:
+    """
 
-def create_new_examples(splitted_sentences, splitted_change_sent, idx, check_trio, position=0):
+    Args:
+        sentences: list of sentences
+        idx_begin: index of first sentence for new text
+        idx_end: index of last sentence for new text
+        idx_boundary: index of target sentence
+        position: position of boundary word in target sentence
+        target_word: boundary word to check
+
+    Returns:
+
+    """
+    text = " ".join(sentences[idx_begin:idx_end])
+    num_of_words_before_last_sent = " ".join(sentences[idx_begin:idx_boundary]).split(" ")
+    new_position_of_target = len(num_of_words_before_last_sent) + position
+    new_target_word = text.split(" ")[new_position_of_target]
+    assert new_target_word == target_word
+    return text, new_position_of_target
+
+def create_new_examples(splitted_sentences: list, target_sentence: str,
+                        idx: int, check_trio: tuple, position=0) ->  list:
+    """
+
+    Args:
+        splitted_sentences: list of all sentences, whitespace-splitted
+        target_sentence: sentence where change of author occurs
+        idx: index of traget sentence in splitted_sentences
+        check_trio: three words containing boundary word for search of position
+        position: position of boundary word
+
+    Returns: list of tuples (new_text, new_label)
+
+    """
     # need to add a check that check trio is shifted when boundary word is on the border
     sentences = [" ".join(sentence) for sentence in splitted_sentences]
     num_sent = len(splitted_sentences)
@@ -37,81 +72,68 @@ def create_new_examples(splitted_sentences, splitted_change_sent, idx, check_tri
     text1 = text2 = text3 = text4 = ""
     new_position_of_target1 = new_position_of_target2 = new_position_of_target3 = new_position_of_target4 = position
     if num_sent == 1:
-        return (text1, new_position_of_target1), (text2, new_position_of_target2), \
-               (text3, new_position_of_target3), (text4, new_position_of_target4)
+        return [(text1, new_position_of_target1), (text2, new_position_of_target2),
+               (text3, new_position_of_target3), (text4, new_position_of_target4)]
     if idx == 0:
-        idx1 = min(num_sent + 3, num_sent - 1)
+        idx1 = num_sent // 2
         text1 = " ".join(sentences[:idx1])
         new_position_of_target1 = position
     elif idx == num_sent - 1:
         idx1 = num_sent // 2
         if idx1 != 0:
             text1 = " ".join(sentences[idx1:])
-            position = find_index_of_word(splitted_change_sent, check_trio)
+            position = find_index_of_word(target_sentence, check_trio)
             num_of_words_before_last_sent = " ".join(sentences[idx1:idx]).split(" ")
             new_position_of_target1 = len(num_of_words_before_last_sent) + position
     else:
-        position = find_index_of_word(splitted_change_sent, check_trio)
+        position = find_index_of_word(target_sentence, check_trio)
         idx1_begin = max(0, idx - 1)
         idx1_end = min(num_sent - 1, idx + 2)
         if idx1_end - idx1_begin > 1:
-            text1 = " ".join(sentences[idx1_begin:idx1_end])
-            num_of_words_before_last_sent = " ".join(sentences[idx1_begin:idx]).split(" ")
-            new_position_of_target1 = len(num_of_words_before_last_sent) + position
-            text1_word = text1.split(" ")[new_position_of_target1]
-            assert text1_word == word_to_check
+            text1, new_position_of_target1 = create_example(sentences, idx1_begin, idx1_end,
+                                                            idx, position, word_to_check)
+
         idx2_begin = max(0, idx - 2)
         idx2_end = min(num_sent - 1, idx + 3)
         if (idx2_begin == 0 and idx2_end == num_sent - 1) or \
                 (idx2_begin == idx1_begin and idx2_end == idx1_end) or \
                 (idx1_begin == idx2_begin and idx1_begin == 0):
-            return (text1, new_position_of_target1), (text2, new_position_of_target2), \
-                   (text3, new_position_of_target3), (text4, new_position_of_target4)
+            return [(text1, new_position_of_target1), (text2, new_position_of_target2),
+                   (text3, new_position_of_target3), (text4, new_position_of_target4)]
         if idx2_end - idx2_begin > 2:
-            text2 = " ".join(sentences[idx2_begin:idx2_end])
-            num_of_words_before_last_sent = " ".join(sentences[idx2_begin:idx]).split(" ")
-            new_position_of_target2 = len(num_of_words_before_last_sent) + position
-            text2_word = text2.split(" ")[new_position_of_target2]
-            assert text2_word == word_to_check
+            text2, new_position_of_target2 = create_example(sentences, idx2_begin, idx2_end,
+                                                            idx, position, word_to_check)
         idx3_begin = max(0, idx - 3)
         idx3_end = min(num_sent - 1, idx + 4)
         if (idx3_begin == 0 and idx3_end == num_sent - 1) or \
                 (idx3_begin == idx2_begin and idx2_end == idx3_end) or \
                 (idx3_begin == idx2_begin and idx3_begin == 0):
-            return (text1, new_position_of_target1), (text2, new_position_of_target2), \
-                   (text3, new_position_of_target3), (text4, new_position_of_target4)
+            return [(text1, new_position_of_target1), (text2, new_position_of_target2),
+                   (text3, new_position_of_target3), (text4, new_position_of_target4)]
         if idx3_end - idx3_begin > 2:
-            text3 = " ".join(sentences[idx3_begin:idx3_end])
-            num_of_words_before_last_sent = " ".join(sentences[idx3_begin:idx]).split(" ")
-            new_position_of_target3 = len(num_of_words_before_last_sent) + position
-            text3_word = text3.split(" ")[new_position_of_target3]
-            assert text3_word == word_to_check
+            text3, new_position_of_target3 = create_example(sentences, idx3_begin, idx3_end,
+                                                            idx, position, word_to_check)
 
         idx4_begin = max(0, idx - 4)
         idx4_end = min(num_sent - 1, idx + 5)
 
         if (idx4_begin == 0 and idx4_end == num_sent - 1) or \
                 (idx4_begin == idx3_begin and idx4_end == idx3_end):
-            return (text1, new_position_of_target1), (text2, new_position_of_target2), \
-                   (text3, new_position_of_target3), (text4, new_position_of_target4)
+            return [(text1, new_position_of_target1), (text2, new_position_of_target2),
+                   (text3, new_position_of_target3), (text4, new_position_of_target4)]
         if idx4_end - idx4_begin > 2:
-            text4 = " ".join(sentences[idx4_begin:idx4_end])
-            num_of_words_before_last_sent = " ".join(sentences[idx4_begin:idx]).split(" ")
-            new_position_of_target4 = len(num_of_words_before_last_sent) + position
-            text4_word = text4.split(" ")[new_position_of_target4]
-            assert text4_word == word_to_check
+            text4, new_position_of_target4 = create_example(sentences, idx4_begin, idx4_end,
+                                                            idx, position, word_to_check)
     return [(text1, new_position_of_target1), (text2, new_position_of_target2),
             (text3, new_position_of_target3), (text4, new_position_of_target4)]
 
 
-
-
-def append_augmented_text_to_df(augmented_df: pd.DataFrame, augmented_text: str, text_label: int,
-                                text_id: str, augmentation_id: int) -> pd.DataFrame:
+def append_augmented_text(augmented_df: list, augmented_text: str, text_label: int,
+                          text_id: str, augmentation_id: int) -> pd.DataFrame:
     """
 
     Args:
-        augmented_df: dataframe with new versions of texts to add new text
+        augmented_df: list with new versions of texts to add new text
         augmented_text: shortened version of original text
         text_label: newly calculated label
         text_id: original id of the text
@@ -141,7 +163,7 @@ def move_special_symbols_to_previous_sent(splitted_sentences):
     return splitted_sentences
 
 
-def process(data, set_text_id=None) -> pd.DataFrame:
+def process(data, set_text_id=None) -> list:
     """
 
     Args:
@@ -152,6 +174,8 @@ def process(data, set_text_id=None) -> pd.DataFrame:
 
     """
     augmented_data = []
+    g = 0
+    failed_flg = False
     for elem in data:
         idx = 0
         words_cnt = 0
@@ -176,8 +200,50 @@ def process(data, set_text_id=None) -> pd.DataFrame:
         idx_of_word_in_sent = 0
 
         for word_idx, word in enumerate(splitted_text):
-            if splitted_sentences[idx_of_sentence][idx_of_word_in_sent] != word:
-                splitted_sentences[idx_of_sentence].insert(idx_of_word_in_sent, word)
+            try:
+                str1 = splitted_sentences[idx_of_sentence][idx_of_word_in_sent]
+            except IndexError as err:
+                failed_flg = True
+                break
+            str2 = word
+            if str1 != str2:
+                if str2 == '':
+                    splitted_sentences[idx_of_sentence].insert(idx_of_word_in_sent, word)
+                    idx_of_word_in_sent += 1
+                    continue
+                for i, s in enumerate(difflib.ndiff(str1, str2)):
+                    if s[0] == ' ':
+                        continue
+                    elif s[0] == '+' and s[-1] == '\n':
+                        splitted_sentences[idx_of_sentence].insert(idx_of_word_in_sent, word)
+                        try:
+                            str_to_del = ""
+                            while len(str_to_del) < len(word):
+                                str_to_del += splitted_sentences[idx_of_sentence].pop(idx_of_word_in_sent + 1)
+                                str_to_del += '\n'
+                        except IndexError as err:
+                            splitted_sentences[idx_of_sentence + 1].pop(0)
+                        break
+                    elif s[0] == '+' and s[-1] == '\r':
+                        splitted_sentences[idx_of_sentence].insert(idx_of_word_in_sent, word)
+                        try:
+                            str_to_del = ""
+                            while len(str_to_del) < len(word):
+                                str_to_del += splitted_sentences[idx_of_sentence].pop(idx_of_word_in_sent + 1)
+                                str_to_del += '\r'
+                        except IndexError as err:
+                            splitted_sentences[idx_of_sentence + 1].pop(0)
+                        break
+                    elif s[0] == '+' and idx_of_word_in_sent == len(splitted_sentences[idx_of_sentence]) - 1:
+                        splitted_sentences[idx_of_sentence][idx_of_word_in_sent] = word
+                        splitted_sentences[idx_of_sentence + 1].pop(0)
+                        splitted_sentences[idx_of_sentence] += splitted_sentences[idx_of_sentence + 1]
+                        splitted_sentences.pop(idx_of_sentence + 1)
+                        break
+                    else:
+                        splitted_sentences[idx_of_sentence].pop(idx_of_word_in_sent)
+                        break
+
             if idx_of_word_in_sent == len(splitted_sentences[idx_of_sentence]) - 1:
                 idx_of_sentence += 1
                 idx_of_word_in_sent = 0
@@ -186,13 +252,17 @@ def process(data, set_text_id=None) -> pd.DataFrame:
             if word_idx >= label:
                 break
 
+        if failed_flg:
+            failed_flg = False
+            continue
+
         shift_begin = False
         shift_end = False
         for i in range(len(sentences)):
-            if words_cnt <= label <= words_cnt + len(splitted_sentences[i]):
+            if words_cnt <= label <= words_cnt + len(splitted_sentences[i]) - 1:
                 if label == words_cnt:
                     shift_begin = True
-                if label == words_cnt + len(splitted_sentences[i]):
+                if label == words_cnt + len(splitted_sentences[i]) - 1:
                     shift_end = True
                 sent_idx = idx
                 break
@@ -206,10 +276,13 @@ def process(data, set_text_id=None) -> pd.DataFrame:
                 check_trio = (text.split(" ")[label - 2], text.split(" ")[label - 1], text.split(" ")[label])
             else:
                 check_trio = (text.split(" ")[label - 1], text.split(" ")[label], text.split(" ")[label + 1])
-            zipped_text_and_labels = create_new_examples(splitted_sentences, splitted_sentences[sent_idx], sent_idx,
-                                                         check_trio, label)
-            for idx, text, label in zipped_text_and_labels:
-                augmented_data = append_augmented_text_to_df(augmented_data, text, label, text_id, idx)
+            try:
+                zipped_text_and_labels = create_new_examples(splitted_sentences, splitted_sentences[sent_idx], sent_idx,
+                                                             check_trio, label)
+            except TypeError as err:
+                continue
+            for idx, (text, label) in enumerate(zipped_text_and_labels):
+                augmented_data = append_augmented_text(augmented_data, text, label, text_id, idx)
         except IndexError as err:
             print(f"Error in {text_id}: {err}")
         except AssertionError as err:
@@ -222,7 +295,8 @@ if __name__ == '__main__':
     texts = []
     mode = 'train'  # can be changed to dev
     shuffle = True
-    path_src = f'data/subtaskC_{mode}.jsonl'
+    path_prefix = "."
+    path_src = f'{path_prefix}/data/subtaskC_{mode}.jsonl'
     with open(path_src, 'r') as json_file:
         jsoned_texts = list(json_file)
     for jsoned_text in jsoned_texts:
@@ -232,6 +306,6 @@ if __name__ == '__main__':
     if shuffle:
         random.shuffle(augmented_texts)
     records = pd.DataFrame(augmented_texts).to_dict("records")
-    with open(f'augmented_{mode}.jsonl', "w") as f:
+    with open(f'{path_prefix}/data/augmented_{mode}.jsonl', "w") as f:
         for record in records:
             f.write(json.dumps(record) + "\n")
