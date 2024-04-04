@@ -29,8 +29,9 @@ def find_index_of_word(target_sentence: str, check_trio: tuple) -> int:
                 target_sentence[i + 1] == check_trio[2]:
             return i
 
-def create_example(sentences: list, idx_begin: int, idx_end: int,
-                   idx_boundary: int, position: int, target_word: str) -> tuple:
+
+def create_examples(sentences: list, idx_begin: int, idx_end: int,
+                    idx_boundary: int, position: int, target_word: str) -> tuple:
     """
 
     Args:
@@ -45,14 +46,25 @@ def create_example(sentences: list, idx_begin: int, idx_end: int,
 
     """
     text = " ".join(sentences[idx_begin:idx_end])
-    num_of_words_before_last_sent = " ".join(sentences[idx_begin:idx_boundary]).split(" ")
-    new_position_of_target = len(num_of_words_before_last_sent) + position
+    num_of_words_before_last_sent = len(" ".join(sentences[idx_begin:idx_boundary]).split(" "))
+    if idx_begin == idx_boundary:
+        num_of_words_before_last_sent = 0
+    new_position_of_target = num_of_words_before_last_sent + position
     new_target_word = text.split(" ")[new_position_of_target]
     assert new_target_word == target_word
+    if text.startswith(" "):
+        temp = " ".join(sentences[idx_begin:idx_end]).split(" ")
+        while len(temp) > 0 and temp[0] == '':
+            temp.pop(0)
+            new_position_of_target -= 1
+        text = text.lstrip(' ')
+        new_target_word = text.split(" ")[new_position_of_target]
+        assert new_target_word == target_word
     return text, new_position_of_target
 
-def create_new_examples(splitted_sentences: list, target_sentence: str,
-                        idx: int, check_trio: tuple, position=0) ->  list:
+
+def augment(splitted_sentences: list, target_sentence: str,
+            idx: int, check_trio: tuple, position=0, regime='even') -> list:
     """
 
     Args:
@@ -61,6 +73,7 @@ def create_new_examples(splitted_sentences: list, target_sentence: str,
         idx: index of traget sentence in splitted_sentences
         check_trio: three words containing boundary word for search of position
         position: position of boundary word
+        regime: ['even', 'left', 'right']: how we append new sentences
 
     Returns: list of tuples (new_text, new_label)
 
@@ -69,16 +82,11 @@ def create_new_examples(splitted_sentences: list, target_sentence: str,
     sentences = [" ".join(sentence) for sentence in splitted_sentences]
     num_sent = len(splitted_sentences)
     word_to_check = check_trio[1]
-    text1 = text2 = text3 = text4 = ""
-    new_position_of_target1 = new_position_of_target2 = new_position_of_target3 = new_position_of_target4 = position
+    text1 = text2 = ""
+    new_position_of_target1 = new_position_of_target2 = new_position_of_target3 = position
     if num_sent == 1:
-        return [(text1, new_position_of_target1), (text2, new_position_of_target2),
-               (text3, new_position_of_target3), (text4, new_position_of_target4)]
-    if idx == 0:
-        idx1 = num_sent // 2
-        text1 = " ".join(sentences[:idx1])
-        new_position_of_target1 = position
-    elif idx == num_sent - 1:
+        return [(text1, new_position_of_target1), (text2, new_position_of_target2)]
+    if idx == num_sent - 1:
         idx1 = num_sent // 2
         if idx1 != 0:
             text1 = " ".join(sentences[idx1:])
@@ -87,45 +95,42 @@ def create_new_examples(splitted_sentences: list, target_sentence: str,
             new_position_of_target1 = len(num_of_words_before_last_sent) + position
     else:
         position = find_index_of_word(target_sentence, check_trio)
-        idx1_begin = max(0, idx - 1)
-        idx1_end = min(num_sent - 1, idx + 2)
-        if idx1_end - idx1_begin > 1:
-            text1, new_position_of_target1 = create_example(sentences, idx1_begin, idx1_end,
-                                                            idx, position, word_to_check)
+        if regime == 'even':
+            idx1_begin = max(0, idx - 2)
+            idx1_end = min(num_sent - 1, idx + 3)
+        elif regime == 'left':
+            idx1_begin = max(0, idx - 2)
+            idx1_end = min(num_sent - 1, idx + 2)
+        else:
+            idx1_begin = max(0, idx)
+            idx1_end = min(num_sent - 1, idx + 3)
 
-        idx2_begin = max(0, idx - 2)
-        idx2_end = min(num_sent - 1, idx + 3)
+        if idx1_begin == 0 and idx1_end == num_sent - 1:
+            return [(text1, new_position_of_target1), (text2, new_position_of_target2)]
+
+        if idx1_end - idx1_begin > 1:
+            text1, new_position_of_target1 = create_examples(sentences, idx1_begin, idx1_end,
+                                                             idx, position, word_to_check)
+
+        if regime == 'even':
+            idx2_begin = max(0, idx - 3)
+            idx2_end = min(num_sent - 1, idx + 5)
+        elif regime == 'left':
+            idx2_begin = max(0, idx - 4)
+            idx2_end = min(num_sent - 1, idx + 3)
+        else:
+            idx2_begin = max(0, idx - 1)
+            idx2_end = min(num_sent - 1, idx + 7)
+
         if (idx2_begin == 0 and idx2_end == num_sent - 1) or \
                 (idx2_begin == idx1_begin and idx2_end == idx1_end) or \
                 (idx1_begin == idx2_begin and idx1_begin == 0):
-            return [(text1, new_position_of_target1), (text2, new_position_of_target2),
-                   (text3, new_position_of_target3), (text4, new_position_of_target4)]
+            return [(text1, new_position_of_target1), (text2, new_position_of_target2)]
         if idx2_end - idx2_begin > 2:
-            text2, new_position_of_target2 = create_example(sentences, idx2_begin, idx2_end,
-                                                            idx, position, word_to_check)
-        idx3_begin = max(0, idx - 3)
-        idx3_end = min(num_sent - 1, idx + 4)
-        if (idx3_begin == 0 and idx3_end == num_sent - 1) or \
-                (idx3_begin == idx2_begin and idx2_end == idx3_end) or \
-                (idx3_begin == idx2_begin and idx3_begin == 0):
-            return [(text1, new_position_of_target1), (text2, new_position_of_target2),
-                   (text3, new_position_of_target3), (text4, new_position_of_target4)]
-        if idx3_end - idx3_begin > 2:
-            text3, new_position_of_target3 = create_example(sentences, idx3_begin, idx3_end,
-                                                            idx, position, word_to_check)
+            text2, new_position_of_target2 = create_examples(sentences, idx2_begin, idx2_end,
 
-        idx4_begin = max(0, idx - 4)
-        idx4_end = min(num_sent - 1, idx + 5)
-
-        if (idx4_begin == 0 and idx4_end == num_sent - 1) or \
-                (idx4_begin == idx3_begin and idx4_end == idx3_end):
-            return [(text1, new_position_of_target1), (text2, new_position_of_target2),
-                   (text3, new_position_of_target3), (text4, new_position_of_target4)]
-        if idx4_end - idx4_begin > 2:
-            text4, new_position_of_target4 = create_example(sentences, idx4_begin, idx4_end,
-                                                            idx, position, word_to_check)
-    return [(text1, new_position_of_target1), (text2, new_position_of_target2),
-            (text3, new_position_of_target3), (text4, new_position_of_target4)]
+                                                             idx, position, word_to_check)
+    return [(text1, new_position_of_target1), (text2, new_position_of_target2)]
 
 
 def append_augmented_text(augmented_df: list, augmented_text: str, text_label: int,
@@ -174,9 +179,8 @@ def process(data, set_text_id=None) -> list:
 
     """
     augmented_data = []
-    g = 0
     failed_flg = False
-    for elem in data:
+    for iter_idx, elem in enumerate(data):
         idx = 0
         words_cnt = 0
         sent_idx = 0
@@ -184,8 +188,11 @@ def process(data, set_text_id=None) -> list:
             if elem['id'] != set_text_id:
                 continue
         text_id = elem['id']
+
         label = elem['label']
         text = elem['text']
+        if label == 0:
+            continue
 
         splitted_text = text.split(" ")
 
@@ -212,6 +219,7 @@ def process(data, set_text_id=None) -> list:
                     idx_of_word_in_sent += 1
                     continue
                 for i, s in enumerate(difflib.ndiff(str1, str2)):
+                    # if some tokens differ
                     if s[0] == ' ':
                         continue
                     elif s[0] == '+' and s[-1] == '\n':
@@ -268,7 +276,8 @@ def process(data, set_text_id=None) -> list:
                 break
             idx += 1
             words_cnt += len(splitted_sentences[i])
-
+        if sent_idx == 0:
+            continue
         try:
             if shift_begin:
                 check_trio = (text.split(" ")[label], text.split(" ")[label + 1], text.split(" ")[label + 2])
@@ -277,8 +286,13 @@ def process(data, set_text_id=None) -> list:
             else:
                 check_trio = (text.split(" ")[label - 1], text.split(" ")[label], text.split(" ")[label + 1])
             try:
-                zipped_text_and_labels = create_new_examples(splitted_sentences, splitted_sentences[sent_idx], sent_idx,
-                                                             check_trio, label)
+                # it can be changed but we've found that it gives best results
+                if sent_idx < 4:
+                    regime = 'right'
+                else:
+                    regime = 'left'
+                zipped_text_and_labels = augment(splitted_sentences, splitted_sentences[sent_idx], sent_idx,
+                                                 check_trio, label, regime)
             except TypeError as err:
                 continue
             for idx, (text, label) in enumerate(zipped_text_and_labels):
@@ -295,8 +309,8 @@ if __name__ == '__main__':
     texts = []
     mode = 'train'  # can be changed to dev
     shuffle = True
-    path_prefix = "."
-    path_src = f'{path_prefix}/data/subtaskC_{mode}.jsonl'
+    path_prefix = "./subtaskC"
+    path_src = f'{path_prefix}/data/subtaskC_train.jsonl'
     with open(path_src, 'r') as json_file:
         jsoned_texts = list(json_file)
     for jsoned_text in jsoned_texts:
@@ -306,6 +320,6 @@ if __name__ == '__main__':
     if shuffle:
         random.shuffle(augmented_texts)
     records = pd.DataFrame(augmented_texts).to_dict("records")
-    with open(f'{path_prefix}/data/augmented_{mode}.jsonl', "w") as f:
+    with open(f'{path_prefix}/data/augmentation.jsonl', "w") as f:
         for record in records:
             f.write(json.dumps(record) + "\n")
