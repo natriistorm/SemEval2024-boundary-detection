@@ -1,4 +1,4 @@
-# semeval2024-machine-generated-texts-detection
+# Semeval2024 Task~8 Submission from DeepPavlov Team
 
 This is a repository for SemEval204-Task8-subtaskC from DeepPavlov team. The [repository](https://github.com/mbzuai-nlp/SemEval2024-task8) with all information about competition.
 
