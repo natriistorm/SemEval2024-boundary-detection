@@ -4,7 +4,7 @@ This is a repository for SemEval204-Task8-subtaskC from DeepPavlov team. Our sol
 
 Pipeline for Data Augmentation:
 
-![Pipeline for Data Augmentation](./pics/scheme_final_versiom.png)
+![Pipeline for Data Augmentation](./pics/scheme_final_version.png)
 
 Code for augmentation can be found [here](./src/data_augmentation.py). The [baseline solution](./src/transformer_baseline.py.py) is from organizers
 
