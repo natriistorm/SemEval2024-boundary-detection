@@ -1,6 +1,9 @@
 # semeval2024-machine-generated-texts-detection
 
-This is a repository for SemEval204-Task8-subtaskC from DeepPavlov team. Our solution recieves best MAE score in accoradance with the leaderboard.
+This is a repository for SemEval204-Task8-subtaskC from DeepPavlov team. The repository with all information about competition: https://github.com/mbzuai-nlp/SemEval2024-task8.
+
+
+Our solution recieves best MAE score in accoradance with the leaderboard.
 
 Pipeline for Data Augmentation:
 
