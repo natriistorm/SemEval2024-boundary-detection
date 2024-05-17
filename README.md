@@ -1,4 +1,4 @@
-# SemEval2024 Task-8 Submission from DeepPavlov Team
+# DeepPavlov at SemEval-2024 Task 8: Leveraging Transfer Learning for Detecting Boundaries of Machine-Generated Texts
 
 This is a repository for SemEval204-Task8-subtaskC from DeepPavlov team. The [repository](https://github.com/mbzuai-nlp/SemEval2024-task8) with all information about competition.
 
