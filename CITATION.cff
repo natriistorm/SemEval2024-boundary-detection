@@ -23,7 +23,7 @@ preferred-citation:
   authors:
    - family-names: "Voznyuk"
     given-names: "Anastasia"
-  - family-names: "Konovalov"
+   - family-names: "Konovalov"
     given-names: "Vasily "
   collection-title: "Proceedings of the 18th International Workshop on Semantic Evaluation (SemEval-2024) # booktitle
   collection-type: "proceedings"
@@ -33,4 +33,3 @@ preferred-citation:
   start: 1821 # First page number
   end: 1829 # Last page number
   year: 2024
-
