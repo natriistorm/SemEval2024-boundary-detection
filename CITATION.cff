@@ -17,16 +17,11 @@ authors:
   - family-names: Konovalov
     given-names: Vasily
 cff-version: 1.2.0
-date-released: 2013-11-30
-message: If you use this software, please cite it as below.
+date-released: 2024-06-28
 identifiers:
   - type: url
-    value: https://github.com/natriistorm/SemEval2024-boundary-detection
+    value: "https://aclanthology.org/2024.semeval-1.257"
     description: Latest version
-keywords:
-  - research
-  - detection repackaged Android applications
-  - resouce files
 license: Apache-2.0
 repository-code: https://github.com/natriistorm/SemEval2024-boundary-detection
 preferred-citation:
@@ -43,7 +38,6 @@ preferred-citation:
   collection-type: proceedings
   conference:
     name: SemEval
-  doi: 10.1007/978-3-662-43936-4_9
   start: 1821
   end: 1829
   year: 2024
