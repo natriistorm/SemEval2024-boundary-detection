@@ -9,3 +9,9 @@ Pipeline for Data Augmentation:
 ![Pipeline for Data Augmentation](./pics/scheme_final_version.png)
 
 Code for augmentation can be found [here](./src/data_augmentation.py).
+
+
+To cite our work:
+```
+[DeepPavlov at SemEval-2024 Task 8: Leveraging Transfer Learning for Detecting Boundaries of Machine-Generated Texts](https://aclanthology.org/2024.semeval-1.257) (Voznyuk & Konovalov, SemEval 2024)
+```
