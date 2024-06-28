@@ -1,0 +1,36 @@
+title: DeepPavlov at SemEval-2024 Task 8: Leveraging Transfer Learning for Detecting Boundaries of Machine-Generated Texts
+abstract: The Multigenerator, Multidomain, and Multilingual Black-Box Machine-Generated Text Detection shared task in the SemEval-2024 competition aims to tackle the problem of misusing collaborative human-AI writing. Although there are a lot of existing detectors of AI content, they are often designed to give a binary answer and thus may not be suitable for more nuanced problem of finding the boundaries between human-written and machine-generated texts, while hybrid human-AI writing becomes more and more popular. In this paper, we address the boundary detection problem. Particularly, we present a pipeline for augmenting data for supervised fine-tuning of DeBERTaV3. We receive new best MAE score, according to the leaderboard of the competition, with this pipeline.authors:
+  - family-names: Voznyuk
+    given-names: Anastasia
+  - family-names: Konovalov
+    given-names: Vasily 
+cff-version: 1.2.0
+date-released: "2013-11-30"
+identifiers:
+  - type: url
+    value: "https://github.com/natriistorm/SemEval2024-boundary-detection"
+    description: Latest version
+keywords:
+  - research
+  - "detection repackaged Android applications"
+  - "resouce files"
+license: Apache-2.0
+message: If you use this software, please cite it using these metadata.
+repository-code: "https://github.com/natriistorm/SemEval2024-boundary-detection"
+preferred-citation:
+  title: "DeepPavlov at SemEval-2024 Task 8: Leveraging Transfer Learning for Detecting Boundaries of Machine-Generated Texts"
+  type: conference-paper
+  authors:
+   - family-names: "Voznyuk"
+    given-names: "Anastasia"
+  - family-names: "Konovalov"
+    given-names: "Vasily "
+  collection-title: "Proceedings of the 18th International Workshop on Semantic Evaluation (SemEval-2024) # booktitle
+  collection-type: "proceedings"
+  conference:
+    name: "SemEval" # series
+  doi: "10.1007/978-3-662-43936-4_9"
+  start: 1821 # First page number
+  end: 1829 # Last page number
+  year: 2024
+
