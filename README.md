@@ -26,12 +26,11 @@ Forecasting-fMRI-Images
 ├── LICENSE
 ├── README.md
 ├── code
-│   ├── run.sh # shell script to load transformer_baseline and start experiment
-│   ├── data_augmentation.py # main file for augmentation
-│   ├── transformer_baseline.py # file to run experiments
-│   ├── splitter.py # util file for splitting the texts
-│   └── scorer.py # file to calculate MAE
-└── 
+    ├── run.sh # shell script to load transformer_baseline and start experiment
+    ├── data_augmentation.py # main file for augmentation
+    ├── transformer_baseline.py # file to run experiments
+    ├── splitter.py # util file for splitting the texts
+    └── scorer.py # file to calculate MAE
 ```
 
 ## 🔎 Citation
