@@ -28,7 +28,7 @@ The issue of reconstructing the relationship between functional magnetic resonan
 
 ## 🔎 Overview
 <div align="center">
-  <img alt="overview" src="https://github.com/DorinDaniil/Forecasting-fMRI-Images/assets/70231416/b02ebddd-432c-4e7b-8c81-905a99ded757">
+  <img alt="overview" src="https://github.com/natriistorm/SemEval2024-boundary-detection/pics/scheme_final_version.png">
 </div>
 
 ## 🛠️ Repository Structure
