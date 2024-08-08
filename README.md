@@ -2,7 +2,7 @@
 <h1>DeepPavlov at SemEval-2024 Task 8: Leveraging Transfer Learning for Detecting Boundaries of Machine-Generated Texts</h1>
 
 [Anastasia Voznyuk](https://github.com/natriistorm)<sup>1 :email: *</sup>, Vasily Konovalov<sup>1</sup>
-vozniuk.ae@phystech.edu
+<sup>1</sup> vozniuk.ae@phystech.edu
 
 <sup>1</sup> Moscow Institute of Physics and Technology
 
