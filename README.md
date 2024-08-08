@@ -25,7 +25,7 @@ The repository is structured as follows:
 Forecasting-fMRI-Images
 ├── LICENSE
 ├── README.md
-├── code
+└── code
     ├── run.sh # shell script to load transformer_baseline and start experiment
     ├── data_augmentation.py # main file for augmentation
     ├── transformer_baseline.py # file to run experiments
