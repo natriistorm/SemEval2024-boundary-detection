@@ -28,7 +28,7 @@ The issue of reconstructing the relationship between functional magnetic resonan
 
 ## 🔎 Overview
 <div align="center">
-  <img alt="overview" src="https://github.com/natriistorm/SemEval2024-boundary-detection/pics/scheme_final_version.png">
+  <img alt="overview" src="https://github.com/natriistorm/SemEval2024-boundary-detection/blob/main/pics/scheme_final_version.png">
 </div>
 
 ## 🛠️ Repository Structure
