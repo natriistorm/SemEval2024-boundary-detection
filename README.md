@@ -7,11 +7,11 @@
 
 <sup>:email:</sup> Corresponding author
 
-[📝 Paper](https://github.com/kisnikser/Forecasting-fMRI-Images/blob/main/paper/main.pdf), [</> Code](https://github.com/natriistorm/SemEval2024-boundary-detection/tree/main/src)
+[📝 Paper](https://aclanthology.org/2024.semeval-1.257/), [</> Code](https://github.com/natriistorm/SemEval2024-boundary-detection/tree/main/src)
 </div>
 
 ## 💡 Abstract
-The issue of reconstructing the relationship between functional magnetic resonance imaging (fMRI) sensor readings and human perception of the external is investigated. The study analyzes the dependence between the fMRI images and the videos viewed by individuals. Based on this analysis, a method is proposed for approximating the fMRI readings using the video sequence. The method is based on the assumption that there is a time-invariant hemodynamic response to changes in blood oxygen levels. A linear model is constructed for each individual voxel in the fMRI image, assuming that the image sequence follows a Markov property. To test the proposed method, a computational experiment was conducted on a dataset collected during tomographic examinations of a large number of individuals. The performance of the method was evaluated based on the experimental data, and hypotheses were tested regarding the invariance of the model weights and the correctness of the method.
+The Multigenerator, Multidomain, and Multilingual Black-Box Machine-Generated Text Detection shared task in the SemEval-2024 competition aims to tackle the problem of misusing collaborative human-AI writing. Although there are a lot of existing detectors of AI content, they are often designed to give a binary answer and thus may not be suitable for more nuanced problem of finding the boundaries between human-written and machine-generated texts, while hybrid human-AI writing becomes more and more popular. In this paper, we address the boundary detection problem. Particularly, we present a pipeline for augmenting data for supervised fine-tuning of DeBERTaV3. We receive new best MAE score, according to the leaderboard of the competition, with this pipeline.
 
 ## 🔎 Overview
 <div align="center">
@@ -20,26 +20,18 @@ The issue of reconstructing the relationship between functional magnetic resonan
 
 ## 🛠️ Repository Structure
 The repository is structured as follows:
-- `paper`: This directory contains the main paper in PDF format (`main.pdf`) and the LaTeX source file (`main.tex`). Also there is a directory `figures` with images used in the paper.
-- `code`: This directory contains the code used in the paper. It has its own `README.md` file providing a detailed description of the code files.
+- `src`: This directory contains the code used in the paper and for submission.
 ```shell
 Forecasting-fMRI-Images
 ├── LICENSE
 ├── README.md
 ├── code
-│   ├── README.md
-│   ├── dataloader.py
-│   ├── main.ipynb
-│   ├── models.py
-│   ├── utils.py
-│   └── visualizer.py
-└── paper
-    ├── figs
-    ├── main.pdf
-    ├── main.tex
-    ├── references.bib
-    ├── sn-jnl.cls
-    └── sn-mathphys-num.bst
+│   ├── run.sh # shell script to load transformer_baseline and start experiment
+│   ├── data_augmentation.py # main file for augmentation
+│   ├── transformer_baseline.py # file to run experiments
+│   ├── splitter.py # util file for splitting the texts
+│   └── scorer.py # file to calculate MAE
+└── 
 ```
 
 ## 🔎 Citation
