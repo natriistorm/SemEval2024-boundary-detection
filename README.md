@@ -1,16 +1,3 @@
-# DeepPavlov at SemEval-2024 Task 8: Leveraging Transfer Learning for Detecting Boundaries of Machine-Generated Texts
-
-This is a repository for SemEval204-Task8-subtaskC solution from DeepPavlov team. 
-Our solution receives the best MAE score in accordance with the leaderboard (13.38).
-
-![Pipeline for Data Augmentation](./pics/scheme_final_version.png)
-
-Code for augmentation can be found [here](./src/data_augmentation.py).
-
-
-
-
-
 <div align="center">
 <h1>DeepPavlov at SemEval-2024 Task 8: Leveraging Transfer Learning for Detecting Boundaries of Machine-Generated Texts</h1>
 
@@ -20,7 +7,7 @@ Code for augmentation can be found [here](./src/data_augmentation.py).
 
 <sup>:email:</sup> Corresponding author
 
-[📝 Paper](https://github.com/kisnikser/Forecasting-fMRI-Images/blob/main/paper/main.pdf), [</> Code](https://github.com/kisnikser/Forecasting-fMRI-Images/tree/main/code)
+[📝 Paper](https://github.com/kisnikser/Forecasting-fMRI-Images/blob/main/paper/main.pdf), [</> Code](https://github.com/natriistorm/SemEval2024-boundary-detection/tree/main/src)
 </div>
 
 ## 💡 Abstract
